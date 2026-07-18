@@ -1,22 +1,21 @@
-name: Weekend Travel Search
+name: TisotVeOd
 
 on:
-  schedule:
-    # כל 3 שעות, 13 דקות אחרי שעה עגולה
-    - cron: "13 */3 * * *"
-
   workflow_dispatch:
+
+  schedule:
+    - cron: "13 */3 * * *"
 
 jobs:
   search:
+
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
 
-      - name: Install Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
@@ -24,9 +23,14 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Run search engine
+      - name: Install Playwright
+        run: |
+          playwright install chromium
+
+      - name: Run
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
         run: |
           python main.py
