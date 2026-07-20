@@ -1,31 +1,30 @@
+from providers import get_all_deals
 from telegram import send_message
-from flight_search import search_flights
-from utils import format_price
+from config import MAX_PRICE
 
+deals = get_all_deals()
 
-def main():
-    deals = search_flights()
+count = 0
 
-    if not deals:
-        send_message("לא נמצאו עסקאות מתאימות כרגע.")
-        return
+for deal in deals:
 
-    for deal in deals:
-        message = f"""🔥 נמצאה עסקה!
+    if deal["price"] > MAX_PRICE:
+        continue
 
-יעד: {deal["destination"]}
-יציאה: {deal["depart"]}
-חזרה: {deal["return"]}
-שדה: {deal["airport"]}
-טיסה ישירה: כן
-מחיר כולל: {format_price(deal["price"])}
+    count += 1
 
-קישור: {deal["link"]}
+    send_message(
+        f"""✈️ {deal['destination']}
 
-5 נוסעים | סוף שבוע"""
+{deal['title']}
 
-        send_message(message)
+₪{deal['price']}
 
+מקור: {deal['source']}
 
-if __name__ == "__main__":
-    main()
+{deal['link']}
+"""
+    )
+
+if count == 0:
+    send_message("לא נמצאו עסקאות מתאימות.")
