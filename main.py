@@ -1,30 +1,22 @@
 from providers import get_all_deals
 from telegram import send_message
-from config import MAX_PRICE
 
 deals = get_all_deals()
 
-count = 0
+if not deals:
+    send_message("לא נמצאו עסקאות.")
+    raise SystemExit()
 
-for deal in deals:
-
-    if deal["price"] > MAX_PRICE:
-        continue
-
-    count += 1
+for deal in deals[:10]:
 
     send_message(
-        f"""✈️ {deal['destination']}
+f"""✈️ עסקה חדשה
 
-{deal['title']}
+{deal["title"]}
 
-₪{deal['price']}
+מקור:
+{deal["source"]}
 
-מקור: {deal['source']}
-
-{deal['link']}
+{deal["link"]}
 """
     )
-
-if count == 0:
-    send_message("לא נמצאו עסקאות מתאימות.")
