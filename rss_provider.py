@@ -1,34 +1,33 @@
 import feedparser
-from datetime import datetime
+
 from normalizer import normalize
-from config import RSS_FEEDS
+from sources import RSS_FEEDS
 
 
 def get_rss_deals():
 
     deals = []
 
-    for feed_url in RSS_FEEDS:
+    for url in RSS_FEEDS:
 
-        feed = feedparser.parse(feed_url)
+        feed = feedparser.parse(url)
 
         for entry in feed.entries:
 
-            title = entry.get("title", "")
+            deals.append(
 
-            link = entry.get("link", "")
+                normalize({
 
-            published = entry.get("published", "")
+                    "title": entry.get("title", ""),
 
-            deal = normalize({
-                "title": title,
-                "destination": "",
-                "price": 999999,
-                "link": link,
-                "source": feed.feed.get("title", feed_url),
-                "published": published
-            })
+                    "link": entry.get("link", ""),
 
-            deals.append(deal)
+                    "source": feed.feed.get("title", url),
+
+                    "published": entry.get("published", "")
+
+                })
+
+            )
 
     return deals
