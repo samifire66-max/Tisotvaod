@@ -1,30 +1,30 @@
 from providers import get_all_deals
 from telegram import send_message
-from filters import is_flight_deal
 
 deals = get_all_deals()
 
-count = 0
+if not deals:
 
-for deal in deals:
+    send_message("לא נמצאו עסקאות.")
 
-    if not is_flight_deal(deal["title"]):
-        continue
+    raise SystemExit()
 
-    count += 1
+for deal in deals[:10]:
 
-    send_message(
-f"""✈️
-
-{deal["title"]}
+    message = f"""✈️ {deal.title}
 
 מקור:
-{deal["source"]}
+{deal.source}
 
-{deal["link"]}
+{deal.link}
 """
-    )
 
-if count == 0:
+    if deal.destination:
 
-    send_message("לא נמצאו עסקאות טיסה.")
+        message += f"\nיעד: {deal.destination}"
+
+    if deal.price:
+
+        message += f"\nמחיר: ₪{deal.price}"
+
+    send_message(message)
