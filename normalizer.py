@@ -1,10 +1,13 @@
-def normalize(deal):
+from deal import Deal
 
-    return {
-        "title": deal.get("title", ""),
-        "destination": deal.get("destination", ""),
-        "price": deal.get("price", 999999),
-        "link": deal.get("link", ""),
-        "source": deal.get("source", ""),
-        "published": deal.get("published", "")
-    }
+
+def normalize(data):
+
+    return Deal(
+        title=data.get("title", ""),
+        link=data.get("link", ""),
+        source=data.get("source", ""),
+        destination=data.get("destination", ""),
+        price=data.get("price"),
+        published=data.get("published", "")
+    )
