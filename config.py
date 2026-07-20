@@ -19,3 +19,7 @@ TRIP_OPTIONS = [
     (3, 4),   # חמישי-ראשון
     (2, 3)    # שישי-ראשון
 ]
+RSS_FEEDS = [
+    "https://www.theflightdeal.com/feed/",
+    "https://travelfree.info/feed/"
+]
