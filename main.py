@@ -1,17 +1,23 @@
 from providers import get_all_deals
+
 from telegram import send_message
+
+from settings import SEARCH
 
 deals = get_all_deals()
 
-if not deals:
+count = 0
 
-    send_message("לא נמצאו עסקאות.")
+for deal in deals:
 
-    raise SystemExit()
+    if count >= SEARCH["max_results"]:
+        break
 
-for deal in deals[:10]:
+    send_message(
 
-    message = f"""✈️ {deal.title}
+f"""✈️
+
+{deal.title}
 
 מקור:
 {deal.source}
@@ -19,12 +25,10 @@ for deal in deals[:10]:
 {deal.link}
 """
 
-    if deal.destination:
+    )
 
-        message += f"\nיעד: {deal.destination}"
+    count += 1
 
-    if deal.price:
+if count == 0:
 
-        message += f"\nמחיר: ₪{deal.price}"
-
-    send_message(message)
+    send_message("לא נמצאו עסקאות.")
