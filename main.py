@@ -6,20 +6,20 @@ from settings import SEARCH
 
 def build_message(deal):
 
-    lines = []
-
-    lines.append(f"✈️ {deal.title}")
+    lines = [
+        f"✈️ {deal.title}"
+    ]
 
     if deal.destination:
         lines.append(f"📍 יעד: {deal.destination}")
 
-    if deal.price:
+    if deal.price is not None:
         lines.append(f"💰 מחיר: {deal.price}")
-
-    lines.append(f"⭐ ציון: {score(deal)}")
 
     if deal.source:
         lines.append(f"📰 מקור: {deal.source}")
+
+    lines.append(f"⭐ ציון: {score(deal)}")
 
     if deal.link:
         lines.append("")
@@ -30,90 +30,64 @@ def build_message(deal):
 
 def remove_duplicates(deals):
 
-    unique = {}
+    seen = set()
     result = []
 
     for deal in deals:
 
-        key = ""
+        key = (
+            (deal.link or "").strip().lower(),
+            (deal.title or "").strip().lower()
+        )
 
-        if deal.link:
-            key = deal.link.strip().lower()
-
-        elif deal.title:
-            key = deal.title.strip().lower()
-
-        if key in unique:
+        if key in seen:
             continue
 
-        unique[key] = True
+        seen.add(key)
         result.append(deal)
 
     return result
 
 
-def sort_deals(deals):
-
-    return sorted(
-        deals,
-        key=lambda d: (
-            score(d),
-            d.price if d.price else 999999
-        ),
-        reverse=True,
-    )
-
-
 def main():
 
-    print("========== START ==========")
+    print("========== DEBUG ==========")
 
     deals = get_all_deals()
 
-    print(f"Deals received: {len(deals)}")
+    print(f"Deals returned: {len(deals)}")
 
     if not deals:
-        print("No deals returned from providers.")
-        send_message("לא נמצאו עסקאות.")
+        print("No deals found.")
+        send_message("❌ לא נמצאו עסקאות.")
         return
-
-    print("\nDeals before duplicate removal:")
-
-    for d in deals:
-        try:
-            print(f"- {d.title}")
-        except Exception:
-            print(d)
 
     deals = remove_duplicates(deals)
 
-    print(f"\nAfter duplicate removal: {len(deals)}")
+    print(f"After duplicates: {len(deals)}")
 
-    deals = sort_deals(deals)
+    deals.sort(key=score, reverse=True)
 
     sent = 0
-
-    print("\nScoring deals:")
 
     for deal in deals:
 
         s = score(deal)
 
-        try:
-            print(f"{s:3} | {deal.title}")
-        except Exception:
-            print(s)
+        print(f"[{s}] {deal.title}")
 
         if s < 60:
             continue
 
         send_message(build_message(deal))
-
         sent += 1
 
         if sent >= SEARCH["max_results"]:
             break
 
-    print(f"\nSent {sent} deals")
-    print("=========== END ===========")
-        
+    print(f"Sent {sent} deals")
+    print("========== END ==========")
+
+
+if __name__ == "__main__":
+    main()
