@@ -16,7 +16,7 @@ SEARCH = {
     ],
 
     # תקציב כולל
-    "max_price": 4000,
+    "max_price": 40000,
 
     # נוסעים
     "adults": 2,
