@@ -5,23 +5,23 @@ SOURCES = [
         "weight": 10,
     },
     {
-        "name": "TravelFree",
-        "url": "https://travelfree.info/feed/",
-        "weight": 9,
-    },
-    {
         "name": "Travel-Dealz",
         "url": "https://travel-dealz.com/feed/",
+        "weight": 10,
+    },
+    {
+        "name": "Secret Flying",
+        "url": "https://www.secretflying.com/feed/",
         "weight": 9,
     },
     {
-        "name": "I Know The Pilot",
-        "url": "https://iknowthepilot.com.au/feed/",
-        "weight": 8,
+        "name": "Fly4Free",
+        "url": "https://www.fly4free.com/feed/",
+        "weight": 9,
     },
     {
-        "name": "Fare Deal Alert",
-        "url": "https://faredealalert.com/feed/",
-        "weight": 7,
+        "name": "Holiday Pirates",
+        "url": "https://www.holidaypirates.com/feed",
+        "weight": 8,
     },
 ]
