@@ -12,8 +12,13 @@ def get_rss_deals():
 
         feed = feedparser.parse(source["url"])
 
+        print(f"Reading {source['name']}")
+
         if not feed.entries:
-            continue
+               print("  -> 0 entries")
+    continue
+
+print(f"  -> {len(feed.entries)} entries")
 
         for entry in feed.entries:
 
