@@ -96,10 +96,3 @@ def main():
 if __name__ == "__main__":
     main()
         
-        sent += 1
-
-    print(f"Sent {sent} deals")
-
-
-if __name__ == "__main__":
-    main()
