@@ -16,7 +16,7 @@ class SearchEngine:
         for deal in self.deals:
             price = deal.get("price", 999999)
 
-            if price <= 4200:
+            if price <= 42000:
                 filtered.append(deal)
 
         return filtered
