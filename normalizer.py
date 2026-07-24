@@ -2,28 +2,25 @@ from deal import Deal
 
 from extractor import extract_price
 from extractor import extract_destination
+from extractor import has_tlv
 
 
 def normalize(data):
 
     title = data.get("title", "")
+    summary = data.get("summary", "")
 
-    price, currency = extract_price(title)
+    text = f"{title}\n{summary}"
 
-    destination = extract_destination(title)
+    price, currency = extract_price(text)
+
+    destination = extract_destination(text)
 
     return Deal(
-
         title=title,
-
         link=data.get("link", ""),
-
         source=data.get("source", ""),
-
         destination=destination or "",
-
         price=price,
-
-        published=data.get("published", "")
-
+        published=data.get("published", ""),
     )
