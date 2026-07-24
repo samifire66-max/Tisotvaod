@@ -1,3 +1,5 @@
+from flight_detector import is_flight
+
 EUROPE = {
     "Rome",
     "Milan",
@@ -20,23 +22,28 @@ EUROPE = {
     "Warsaw",
     "Krakow",
     "Naples",
-    "Venice"
+    "Venice",
 }
 
 
 def score(deal):
 
+    title = (deal.title or "")
+
+    if not is_flight(title):
+        return 0
+
     score = 0
 
-    title = deal.title.lower()
+    title_lower = title.lower()
 
-    if "tlv" in title:
+    if "tlv" in title_lower:
         score += 60
 
-    if "tel aviv" in title:
+    if "tel aviv" in title_lower:
         score += 60
 
-    if "ben gurion" in title:
+    if "ben gurion" in title_lower:
         score += 60
 
     if deal.destination in EUROPE:
@@ -46,10 +53,8 @@ def score(deal):
 
         if deal.price <= 100:
             score += 40
-
         elif deal.price <= 200:
             score += 30
-
         elif deal.price <= 300:
             score += 20
 
@@ -62,17 +67,15 @@ def score(deal):
         "los angeles",
         "dallas",
         "houston",
-        "san francisco"
+        "san francisco",
     ]
 
     for city in usa:
-
-        if city in title:
+        if city in title_lower:
             score -= 100
 
     return score
 
 
 def is_relevant(deal):
-
     return score(deal) >= 60
