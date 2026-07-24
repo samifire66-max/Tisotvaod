@@ -66,21 +66,45 @@ def sort_deals(deals):
 
 def main():
 
+    print("========== START ==========")
+
     deals = get_all_deals()
+
+    print(f"Deals received: {len(deals)}")
+
+    if not deals:
+        print("No deals returned from providers.")
+        send_message("לא נמצאו עסקאות.")
+        return
+
+    print("\nDeals before duplicate removal:")
+
+    for d in deals:
+        try:
+            print(f"- {d.title}")
+        except Exception:
+            print(d)
 
     deals = remove_duplicates(deals)
 
-    deals = sort_deals(deals)
+    print(f"\nAfter duplicate removal: {len(deals)}")
 
-    if not deals:
-        send_message("לא נמצאו עסקאות רלוונטיות.")
-        return
+    deals = sort_deals(deals)
 
     sent = 0
 
+    print("\nScoring deals:")
+
     for deal in deals:
 
-        if score(deal) < 60:
+        s = score(deal)
+
+        try:
+            print(f"{s:3} | {deal.title}")
+        except Exception:
+            print(s)
+
+        if s < 60:
             continue
 
         send_message(build_message(deal))
@@ -90,9 +114,6 @@ def main():
         if sent >= SEARCH["max_results"]:
             break
 
-    print(f"Sent {sent} deals")
-
-
-if __name__ == "__main__":
-    main()
+    print(f"\nSent {sent} deals")
+    print("=========== END ===========")
         
