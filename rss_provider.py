@@ -8,30 +8,49 @@ def get_rss_deals():
 
     deals = []
 
+    print("\n========== RSS DEBUG ==========\n")
+
     for source in SOURCES:
 
-        feed = feedparser.parse(source["url"])
+        print(f"Reading: {source['name']}")
+        print(f"URL: {source['url']}")
 
-        print(f"Reading {source['name']}")
+        try:
+            feed = feedparser.parse(source["url"])
 
-        if not feed.entries:
-               print("  -> 0 entries")
-    continue
+            if getattr(feed, "bozo", False):
+                print(f"  ⚠ Feed parsing warning: {feed.bozo_exception}")
 
-print(f"  -> {len(feed.entries)} entries")
+            if not feed.entries:
+                print("  -> 0 entries\n")
+                continue
 
-        for entry in feed.entries:
+            print(f"  -> {len(feed.entries)} entries")
 
-            deal = normalize(
-                {
-                    "title": entry.get("title", ""),
-                    "link": entry.get("link", ""),
-                    "source": source["name"],
-                    "published": entry.get("published", ""),
-                }
-            )
+            added = 0
 
-            if deal:
-                deals.append(deal)
+            for entry in feed.entries:
+
+                deal = normalize(
+                    {
+                        "title": entry.get("title", ""),
+                        "link": entry.get("link", ""),
+                        "source": source["name"],
+                        "published": entry.get("published", ""),
+                        "summary": entry.get("summary", ""),
+                    }
+                )
+
+                if deal:
+                    deals.append(deal)
+                    added += 1
+
+            print(f"  -> Added {added} deals\n")
+
+        except Exception as e:
+            print(f"  ERROR: {e}\n")
+
+    print("========== END RSS DEBUG ==========\n")
+    print(f"Total deals collected: {len(deals)}\n")
 
     return deals
