@@ -1,7 +1,8 @@
 import re
 
 PRICE_REGEX = re.compile(
-    r"(₪|\$|€|£)\s?(\d+(?:,\d{3})?)|(\d+(?:,\d{3})?)\s?(₪|\$|€|£)"
+    r"(₪|\$|€|£)\s?(\d+(?:,\d{3})?)|(\d+(?:,\d{3})?)\s?(₪|\$|€|£)",
+    re.IGNORECASE,
 )
 
 DESTINATIONS = {
@@ -38,21 +39,39 @@ DESTINATIONS = {
     "naples": "Naples",
     "venice": "Venice",
     "dubai": "Dubai",
-    "abu dhabi": "Abu Dhabi"
+    "abu dhabi": "Abu Dhabi",
+    "madeira": "Madeira",
+    "malta": "Malta",
+    "crete": "Crete",
+    "heraklion": "Heraklion",
+    "rhodes": "Rhodes",
+    "sicily": "Sicily",
+    "catania": "Catania",
+    "palermo": "Palermo",
 }
 
-
-TLV_PATTERNS = [
+TLV_PATTERNS = (
     "tlv",
     "tel aviv",
-    "ben gurion"
-]
+    "ben gurion",
+    "ben-gurion",
+    "israel",
+    "from israel",
+    "departing israel",
+    "departing tel aviv",
+    "from tel aviv",
+)
+
+
+def clean_text(text: str) -> str:
+    if not text:
+        return ""
+    return re.sub(r"<[^>]+>", " ", text).lower()
 
 
 def extract_price(text):
 
-    if not text:
-        return None, None
+    text = clean_text(text)
 
     m = PRICE_REGEX.search(text)
 
@@ -60,33 +79,31 @@ def extract_price(text):
         return None, None
 
     if m.group(1):
-        value = int(m.group(2).replace(",", ""))
-        return value, m.group(1)
+        return int(m.group(2).replace(",", "")), m.group(1)
 
-    value = int(m.group(3).replace(",", ""))
-    return value, m.group(4)
+    return int(m.group(3).replace(",", "")), m.group(4)
 
 
 def extract_destination(text):
 
-    if not text:
-        return None
+    text = clean_text(text)
 
-    t = text.lower()
+    found = []
 
     for key, value in DESTINATIONS.items():
+        if key in text:
+            found.append((text.index(key), value))
 
-        if key in t:
-            return value
+    if not found:
+        return None
 
-    return None
+    found.sort()
+
+    return found[0][1]
 
 
 def has_tlv(text):
 
-    if not text:
-        return False
+    text = clean_text(text)
 
-    t = text.lower()
-
-    return any(x in t for x in TLV_PATTERNS)
+    return any(pattern in text for pattern in TLV_PATTERNS)
